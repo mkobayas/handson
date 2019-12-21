@@ -323,7 +323,7 @@
                 <distributed-cache name="default" mode="SYNC" segments="256" owners="2" remote-timeout="30000" start="EAGER"/>
                 <distributed-cache name="teams" mode="SYNC" segments="256" owners="2" remote-timeout="30000" start="EAGER"/>
                 <replicated-cache name="repl" configuration="replicated"/>
-                <distributed-cache name="addressbook_indexed" segments="256" owners="2" remote-timeout="30000" start="EAGER"/>
+                <distributed-cache name="addressbook_indexed" segments="256" owners="2" remote-timeout="30000" start="EAGER">
                     <indexing index="LOCAL" auto-config="true"/>
                 </distributed-cache>
             </cache-container>
