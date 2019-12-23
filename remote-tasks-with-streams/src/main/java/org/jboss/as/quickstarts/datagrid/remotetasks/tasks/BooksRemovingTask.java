@@ -19,7 +19,6 @@ package org.jboss.as.quickstarts.datagrid.remotetasks.tasks;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.infinispan.Cache;
 import org.infinispan.stream.CacheAware;
@@ -34,7 +33,7 @@ import org.jboss.as.quickstarts.datagrid.remotetasks.Book;
  * @author Anna Manukyan
  */
 @SuppressWarnings({ "rawtypes", "serial", "unchecked" })
-public class BooksRemovingTask implements ServerTask<Integer> {
+public class BooksRemovingTask implements ServerTask<Void> {
     public static String BOOKS_REMOVING_TASK_NAME = "booksRemovingTask";
 
     private TaskContext taskContext;
@@ -54,35 +53,33 @@ public class BooksRemovingTask implements ServerTask<Integer> {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Void call() throws Exception {
         Cache<UUID, Book> cache = (Cache<UUID, Book>)taskContext.getCache().get();
 
         String author = parameters.get(authorParamName);
         String title = parameters.get(titleParamName);
         
-        AtomicInteger i = new AtomicInteger();
-        cache.entrySet().parallelStream().filter( book ->
-                (author == null || book.getValue().getAuthor().contains(author))
-                        && (title == null || book.getValue().getTitle().contains(title)))
-                .forEach(new MyConsumer(i));
+        cache.entrySet().parallelStream().filter( book -> {
+            if ((author == null || book.getValue().getAuthor().contains(author))
+                        && (title == null || book.getValue().getTitle().contains(title))) {
+                return true;
+            } else {
+                return false;
+            }
+        }).forEach(new MyConsumer());
 
         System.out.println("Successfully finished the action.");
-        return i.get();
+        return null;
     }
     
     public static class MyConsumer implements SerializableConsumer<Entry>, CacheAware {
 
         private transient Cache cache;
-        private AtomicInteger i;
-
-        public MyConsumer(AtomicInteger i) {
-            this.i = i;
-        }
 
         @Override
-        public void accept(Entry e) {            
+        public void accept(Entry e) {
+            System.out.println("Remove " + e.getValue());
             cache.remove(e.getKey());
-            i.incrementAndGet();
         }
 
         @Override

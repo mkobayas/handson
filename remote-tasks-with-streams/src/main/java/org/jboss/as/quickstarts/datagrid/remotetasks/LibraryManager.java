@@ -118,12 +118,8 @@ public class LibraryManager {
             parameters.put("title", title);
 
         //Removing the object from the cache by executing the remote task {{BooksRemovingTask}}.
-        int numberOfDeletedObjects = cache.execute(BooksRemovingTask.BOOKS_REMOVING_TASK_NAME, parameters);
-        if (numberOfDeletedObjects == 0) {
-            System.out.println("No objects were found with specified parameters.");
-        } else {
-            System.out.println("Success! " + numberOfDeletedObjects + " object/s have been deleted.");
-        }
+        cache.execute(BooksRemovingTask.BOOKS_REMOVING_TASK_NAME, parameters);
+        System.out.println("Success!");
     }
 
     /**
