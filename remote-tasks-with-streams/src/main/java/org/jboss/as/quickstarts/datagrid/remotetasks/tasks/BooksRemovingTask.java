@@ -59,14 +59,10 @@ public class BooksRemovingTask implements ServerTask<Void> {
         String author = parameters.get(authorParamName);
         String title = parameters.get(titleParamName);
         
-        cache.entrySet().parallelStream().filter( book -> {
-            if ((author == null || book.getValue().getAuthor().contains(author))
-                        && (title == null || book.getValue().getTitle().contains(title))) {
-                return true;
-            } else {
-                return false;
-            }
-        }).forEach(new MyConsumer());
+        cache.entrySet().parallelStream().filter( book ->
+                        (author == null || book.getValue().getAuthor().contains(author)) 
+                        && (title == null || book.getValue().getTitle().contains(title)))
+             .forEach(new MyConsumer());
 
         System.out.println("Successfully finished the action.");
         return null;
