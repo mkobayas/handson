@@ -264,6 +264,11 @@
         </subsystem>
         <subsystem xmlns="urn:infinispan:server:core:9.4" default-cache-container="clustered">
             <cache-container name="clustered" default-cache="default" statistics="true">
+                <!--
+                <modules>
+                    <module name="deployment.remote-tasks-with-streams-lib.jar"/>
+                </modules>
+                -->
                 <transport lock-timeout="60000"/>
                 <global-state>
                   <persistent-location path="${jboss.node.name:datagrid-infinispan/clustered/}"/>
@@ -326,6 +331,12 @@
                 <distributed-cache name="addressbook_indexed" segments="256" owners="2" remote-timeout="30000" start="EAGER">
                     <indexing index="LOCAL" auto-config="true"/>
                 </distributed-cache>
+                <distributed-cache name="library" start="EAGER">
+                    <encoding>
+                        <key media-type="application/x-java-object"/>
+                        <value media-type="application/x-java-object"/>
+                    </encoding>
+                </local-cache>
             </cache-container>
         </subsystem>
         <subsystem xmlns="urn:infinispan:server:endpoint:9.4">
